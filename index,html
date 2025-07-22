@@ -1,83 +1,176 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Student Management</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Management - CSE A</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: "Segoe UI", sans-serif;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      background: #f5f7fa;
+      color: #333;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 30px auto;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    #searchInput {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    .table-container {
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #007bff;
+      color: white;
+    }
+    @media (max-width: 600px) {
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+      th {
+        display: none;
+      }
+      td {
+        position: relative;
+        padding-left: 50%;
+        border-bottom: 1px solid #eee;
+      }
+      td::before {
+        position: absolute;
+        top: 12px;
+        left: 15px;
+        font-weight: bold;
+        content: attr(data-label);
+        color: #666;
+      }
+    }
+  </style>
 </head>
 <body>
-  <h2>Student Management</h2>
-
-  <form id="student-form">
-    <input type="text" id="name" placeholder="Name" required />
-    <input type="email" id="email" placeholder="Email" required />
-    <input type="text" id="course" placeholder="Course" required />
-    <input type="text" id="status" placeholder="Status" required />
-    <button type="submit">Add Student</button>
-  </form>
-
-  <hr>
-
-  <h3>All Students</h3>
-  <ul id="student-list"></ul>
+  <div class="container">
+    <h1>Jaya Engineering College - CSE A</h1>
+    <input type="text" id="searchInput" placeholder="Search by name or email..." />
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>S.No</th>
+            <th>Name</th>
+            <th>Student Number</th>
+            <th>Email</th>
+          </tr>
+        </thead>
+        <tbody id="studentTable"></tbody>
+      </table>
+    </div>
+  </div>
 
   <script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbx8OD4fcS4cJm4kbTNxfdJprfC0j-kW6hEaGx3I_LmkHI_qU1TWrXP3aE0D6X1yDt8N/exec"; // <--- paste the URL you copied
+    const students = [
+      { sno: 1, name: "AISHWARYA .B", number: "7305719717", email: "ansiaisthuwaya02@gmail.com" },
+      { sno: 2, name: "AJAY .M", number: "8939017587", email: "ajaykittan922550@gmail.com" },
+      { sno: 3, name: "AKASH PRABHU .P", number: "9566231851", email: "akashprabhuhosur03@gmail.com" },
+      { sno: 4, name: "AZEEMULLA .S", number: "9637623394", email: "azeemshkshukriyak@gmail.com" },
+      { sno: 5, name: "ASHIKA", number: "8485535886", email: "ashikaashika@gmail.com" },
+      { sno: 6, name: "BABY SHALINI", number: "9444432927", email: "shalinimurugan20@gmail.com" },
+      { sno: 7, name: "DEEPAK", number: "7440939395", email: "deepak.km02@gmail.com" },
+      { sno: 8, name: "DEEPIKA .P", number: "9944971055", email: "deepikaramkumar275@gmail.com" },
+      { sno: 9, name: "DHANUJA .S", number: "6379589441", email: "tharudhanuja@gmail.com" },
+      { sno: 10, name: "DINESH KUMAR T", number: "6383638887", email: "jogo29537@gmail.com" },
+      { sno: 11, name: "DINESH P", number: "7338870484", email: "" },
+      { sno: 12, name: "DIVYA V", number: "9360881280", email: "" },
+      { sno: 13, name: "DOUGLAS CHRISTOPHER", number: "9343918758", email: "douglas.douglas123@gmail.com" },
+      { sno: 14, name: "GANESH .A", number: "9791196715", email: "" },
+      { sno: 15, name: "GOKUL RAJ", number: "8144473281", email: "gogulraj06@gmail.com" },
+      { sno: 16, name: "GOWTHAM .K", number: "9600861593", email: "k960861@gmail.com" },
+      { sno: 17, name: "HARINI PRIYA .S.P", number: "9317285854", email: "harinipriya4@gmail.com" },
+      { sno: 18, name: "HARISH .A", number: "9444713281", email: "" },
+      { sno: 19, name: "HAVANA .A", number: "9940266017", email: "havanamagdalene@gmail.com" },
+      { sno: 20, name: "JAIKUMAR", number: "8778957615", email: "jaian142205@gmail.com" },
+      { sno: 21, name: "JANARTHANAN", number: "7867008542", email: "" },
+      { sno: 22, name: "JAYANTH", number: "8189861241", email: "" },
+      { sno: 23, name: "JAYASHREE .B", number: "8072248286", email: "" },
+      { sno: 24, name: "JOHN DANIEL PAUL .M", number: "9150462898", email: "john543721@gmail.com" },
+      { sno: 25, name: "KARTHICK .J", number: "8610795811", email: "karthickfire@gmail.com" },
+      { sno: 26, name: "KANNADASAN V", number: "9384058565", email: "kannadasanv@gmail.com" },
+      { sno: 27, name: "KARTHIKA .K", number: "7583881356", email: "karthika7720@gmail.com" },
+      { sno: 28, name: "KIRAN .S", number: "9440722353", email: "kirank04580@gmail.com" },
+      { sno: 29, name: "KISHORE", number: "9482063183", email: "" },
+      { sno: 30, name: "KUMARI", number: "9303811656", email: "rosnainil2007@gmail.com" },
+      { sno: 31, name: "LAKSHMI NARAYANAN", number: "9345075559", email: "narayanan.lakshmi2014@gmail.com" },
+      { sno: 32, name: "LAKSHMI PRIYA", number: "9354380984", email: "lakshmipriyabala1498@gmail.com" },
+      { sno: 33, name: "LINGESHWARAN .K", number: "9345299564", email: "lingeshk05@gmail.com" },
+      { sno: 34, name: "LOGESH", number: "8870371406", email: "" },
+      { sno: 35, name: "LOGESHSWARI", number: "9385032050", email: "" },
+      { sno: 36, name: "MADHIYARASU", number: "9343552234", email: "madhiyarasu816@gmail.com" },
+      { sno: 37, name: "MAHALAKSHMI", number: "8939024402", email: "maha2032007@gmail.com" },
+      { sno: 38, name: "MANJU NETAM", number: "9298145544", email: "netammanju12@gmail.com" },
+      { sno: 39, name: "MANOJ", number: "9887462960", email: "babumanoj18189@gmail.com" },
+      { sno: 40, name: "MOHAMMAD HASSAN", number: "6206423920", email: "mdhassan75543@gmail.com" },
+      { sno: 41, name: "MOHAMMED MYDEEN", number: "8838163680", email: "mohamedbaskar42@gmail.com" },
+      { sno: 42, name: "MOHANAPRIYAN", number: "6383960309", email: "monudaya0614@gmail.com" },
+      { sno: 43, name: "MONASHREE", number: "7397713402", email: "monishraj302@gmail.com" },
+      { sno: 44, name: "MONISH RAJ .T", number: "7418948793", email: "" },
+      { sno: 45, name: "MUKESHWAR S", number: "7305910150", email: "mukeshwar71120054@gmail.com" },
+      { sno: 46, name: "MUTHUVEL", number: "7010406769", email: "muthu53042007@gmail.com" },
+      { sno: 47, name: "D. HARI PRASATH", number: "9790051329", email: "hp5173690@gmail.com" },
+      { sno: 48, name: "K. KARTHIK", number: "8778262376", email: "karthikking2408@gmail.com" },
+      { sno: 49, name: "R. CHARAN PRASUNA", number: "9444560788", email: "charanprasuna2006@gmail.com" }
+    ];
 
-    document.getElementById("student-form").addEventListener("submit", function(e) {
-      e.preventDefault();
-      const data = {
-        name: document.getElementById("name").value,
-        email: document.getElementById("email").value,
-        course: document.getElementById("course").value,
-        status: document.getElementById("status").value
-      };
+    const tableBody = document.getElementById("studentTable");
+    const searchInput = document.getElementById("searchInput");
 
-      fetch(scriptURL, {
-        method: "POST",
-        body: JSON.stringify(data),
-        headers: {
-          "Content-Type": "application/json"
-        }
-      })
-      .then(res => res.text())
-      .then(text => {
-        try {
-          const response = JSON.parse(text);
-          alert(response.message || "Student added!");
-          document.getElementById("student-form").reset();
-          loadStudents();
-        } catch (err) {
-          console.error("Invalid response:", text);
-          alert("Failed to add student.");
-        }
-      })
-      .catch(error => {
-        alert("Error adding student.");
-        console.error(error);
-      });
-    });
-
-    function loadStudents() {
-      fetch(scriptURL)
-        .then(res => res.text())
-        .then(text => {
-          try {
-            const data = JSON.parse(text);
-            const list = document.getElementById("student-list");
-            list.innerHTML = "";
-            data.forEach(student => {
-              list.innerHTML += `<li>${student.name} (${student.email}) - ${student.course} - ${student.status}</li>`;
-            });
-          } catch (err) {
-            console.error("Parse error:", text);
-          }
-        })
-        .catch(error => {
-          console.error("Fetch error:", error);
-        });
+    function renderTable(data) {
+      tableBody.innerHTML = data.map(student => `
+        <tr>
+          <td data-label="S.No">${student.sno}</td>
+          <td data-label="Name">${student.name}</td>
+          <td data-label="Student Number">${student.number}</td>
+          <td data-label="Email">${student.email}</td>
+        </tr>
+      `).join("");
     }
 
-    window.onload = loadStudents;
+    searchInput.addEventListener("keyup", () => {
+      const keyword = searchInput.value.toLowerCase();
+      const filtered = students.filter(s =>
+        s.name.toLowerCase().includes(keyword) ||
+        s.email.toLowerCase().includes(keyword)
+      );
+      renderTable(filtered);
+    });
+
+    renderTable(students);
   </script>
 </body>
 </html>
